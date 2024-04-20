@@ -4,6 +4,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { getCm, getFeet, getKgs, getLbs } from "./utils";
 import { Switch } from "@/components/ui/switch";
 const queryClient = new QueryClient();
+import { ScrollArea } from "@/components/ui/scroll-area";
+import {Progress} from "@/components/ui/progress"
 
 interface TypeObject {
   type: string;
@@ -20,6 +22,12 @@ interface Pokemon {
   children: ReactNode;
 }
 
+
+const nanoId = () => {
+  const index = Math.random()
+  return index;
+}
+
 export default function App() {
   const [pokemon, setPokemon] = useState({
     name: "",
@@ -30,10 +38,26 @@ export default function App() {
   const [isOn, setIsOn] = useState(false);
   const [typeOne, setTypeOne] = useState("");
   const [typeTwo, setTypeTwo] = useState("");
+  const [moves, setMoves] = useState([{
+    move: {
+      name: ""
+    }
+  }]);
+  const [stats, setStats] = useState([{
+    base_stat: 0,
+    stat: {
+      name: ""
+    }
+  }]);
+  const [abilities, setAbilities] = useState([{
+    ability: {
+      name: ''
+    }
+  }])
 
   // Working generic being used. The function, return and internal return get T as a presummed type. Split this up so the exact data can be typed!
   async function getPokemonData(): Promise<Pokemon> {
-    const url = "https://pokeapi.co/api/v2/pokemon/390";
+    const url = "https://pokeapi.co/api/v2/pokemon/150";
     const data = await axios.get(url);
     const pkmnData: Pokemon = data.data;
     const typeOne: [] = data.data.types;
@@ -46,7 +70,9 @@ export default function App() {
     }
     setPokemon(pkmnData);
     setPkmnImgs(data.data.sprites.other["official-artwork"].front_default);
-    console.log(data.data.types);
+    setMoves(data.data.moves)
+    setStats(data.data.stats)
+    setAbilities(data.data.abilities)
     return pkmnData;
   }
 
@@ -54,7 +80,23 @@ export default function App() {
     return val.charAt(0).toUpperCase() + val.slice(1);
   }
 
-  console.log();
+  console.log(pokemon)
+
+  const statLevel = stats.map((item) => {
+    const amount = item.base_stat;
+    const name = item.stat.name;
+    return (
+      <span key={nanoId()}>{getCapital(name)}: {amount} <Progress value={amount}/></span>
+    )
+  })
+
+  const abilityList = abilities.map((item) => (<span key={nanoId()}><p>{getCapital(item.ability.name)}</p></span>))
+  
+const moveList = moves.map((item) => (
+  <span key={nanoId()}><p>{item.move.name}</p></span>
+))
+
+
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -79,22 +121,24 @@ export default function App() {
                   {pkmnImgs && <img src={pkmnImgs} alt="picture of pokemon" />}
                   <figcaption></figcaption>
                 </figure>
-                <h2 className="text-xl"></h2>
-                <img />
+
+              
+                
+                
+                <aside className="border m-2 p-3">
                 <Switch onClick={() => setIsOn(!isOn)} />
-                <aside className="borderm-2 p-3">
                   <section>
                     {isOn ? (
-                      <div className="border">
+                      <div className="">
                         <h3>Imperial</h3>
-                        <span> Weight :{getLbs(pokemon.weight)} lbs</span>
+                        <span> Weight: {getLbs(pokemon.weight)} lbs</span>
                         <br />
                         <span>
-                          Height :{getFeet(pokemon.height, getCm)} Feet
+                          Height: {getFeet(pokemon.height, getCm)} Feet
                         </span>
                       </div>
                     ) : (
-                      <div className="border">
+                      <div className="">
                         <h3>Metric</h3>
                         <span> Weight: {getKgs(pokemon.weight)} Kgs</span>
                         <br />
@@ -110,7 +154,19 @@ export default function App() {
                   <br />
                   {getCapital(typeTwo)}
                 </figure>
-                <figure className="m-2 p-3">moves</figure>
+                <figure className="m-2 p-3">
+                  Ability: 
+                  {abilityList}
+                </figure>
+                <figure className="m-2 p-3">Moves
+                <ScrollArea className="border-4 h-[100px]">
+                    {moveList}
+                </ScrollArea>
+                </figure>
+                <figure className="m-2 p-3">
+                  <h3 className="text-xl p-2">Stats</h3>
+                  {statLevel}
+                </figure>
               </article>
             )}
             <button
