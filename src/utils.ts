@@ -23,3 +23,9 @@ export function getFeet (val: number, getCm: (val: number) => number): number {
     const heightInFeet = (Math.ceil(getCm(val) / 2.54) / 12).toFixed(1);
     return Number(heightInFeet);
 }
+
+export const nanoId = () => {
+    const index = Math.random()
+    return index;
+  }
+  
