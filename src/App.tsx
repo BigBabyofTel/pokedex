@@ -1,26 +1,13 @@
 import axios from "axios";
-import { Fragment, ReactNode, useState } from "react";
+import { Fragment, ReactNode, useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { getCm, getFeet, getKgs, getLbs, nanoId } from "./utils";
+import { getCapital, getCm, getFeet, getKgs, getLbs, nanoId } from "./utils";
 import { Switch } from "@/components/ui/switch";
 
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Progress } from "@/components/ui/progress";
 
-interface TypeObject {
-  type: string;
-}
 
-interface PkmnTypes {
-  type: TypeObject[];
-}
-interface Pokemon {
-  name: string;
-  weight: number;
-  height: number;
-  types: PkmnTypes[];
-  children: ReactNode;
-}
 
 export default function App() {
   const [pokemon, setPokemon] = useState({
@@ -54,11 +41,28 @@ export default function App() {
       },
     },
   ]);
-  const [evolutions, setEvolutions] = useState({});
+  const [evolutions, setEvolutions] = useState<string>();
+  const [secEvol, setSecEvol] = useState<string>();
+  const [searchKey, setSearchKey] = useState("");
 
+  /*
+
+  const getPokemon = async(): Promise<Pokemon> => {
+    const url = "https://pokeapi.co/api/v2/pokemon/1";
+    const response = await axios.get(url);
+    return response.data as Pokemon
+  }
+
+  const { data, error, status } = useQuery({
+    queryKey: ["pokemon"],
+    queryFn: getPokemon,
+  });
+*/
+
+  /*
   // Working generic being used. The function, return and internal return get T as a presummed type. Split this up so the exact data can be typed!
   async function getPokemonData(): Promise<Pokemon> {
-    const url = "https://pokeapi.co/api/v2/pokemon/150";
+    const url = "https://pokeapi.co/api/v2/pokemon/1";
     const data = await axios.get(url);
     const pkmnData: Pokemon = data.data;
     const typeOne: [] = data.data.types;
@@ -76,16 +80,13 @@ export default function App() {
     setAbilities(data.data.abilities);
     return pkmnData;
   }
+*/
 
-  function getCapital(val: string) {
-    return val.charAt(0).toUpperCase() + val.slice(1);
-  }
-  /*
   const getEvolutions = async () => {
-    const data: { data: { chain: { evolves_to: [] } } } = await axios.get(
-      "https://pokeapi.co/api/v2/evolution-chain/1"
-    );
-    setEvolutions(data.data.chain.evolves_to[0]);
+    const data = await axios.get("https://pokeapi.co/api/v2/evolution-chain/1");
+    //setEvolutions(data.data.chain.evolves_to[0].species.name);
+    //setSecEvol(data.data.chain.evolves_to[0][0].species.name);
+    return data as Evolution;
   };
 
   const { data, error, status } = useQuery({
@@ -93,8 +94,15 @@ export default function App() {
     queryFn: getEvolutions,
   });
 
+  useEffect(() => {
+    if (data) {
+      setEvolutions(data.data.chain.evolves_to[0].species.name);
+      setSecEvol(data.data.chain.evolves_to[0].evolves_to[0].species.name);
+    }
+  }, [data]);
+
   console.log(evolutions);
-*/
+  console.log(secEvol);
   const statLevel = stats.map((item) => {
     const amount = item.base_stat;
     const name = item.stat.name;
@@ -131,6 +139,9 @@ export default function App() {
             <li className="text-white">Blog</li>
           </ul>
         </nav>
+        <section className="border-4">
+          <input type="text" onChange={(e) => setSearchKey(e.target.value)} />
+        </section>
         <main className="m-2 p-3 bg-red-400">
           <h2 className="text-3xl">{getCapital(pokemon.name)}</h2>
           {pokemon.name && (
@@ -181,9 +192,7 @@ export default function App() {
                 <h3 className="text-xl p-2">Stats</h3>
                 {statLevel}
               </figure>
-
-              {status === "pending" && <p>Loading...</p>}
-              {status === "error" && <p>Error: {`${error}`}</p>}
+              <figure>{evolutions && <span>{evolutions}</span>}</figure>
             </article>
           )}
           <button
@@ -196,6 +205,8 @@ export default function App() {
         <footer className="text-center bg-red-400">
           <h2>Created by T. Augustus Baker</h2>
         </footer>
+        {status === "pending" && <p>Loading...</p>}
+        {status === "error" && <p>Error: {`${error}`}</p>}
       </main>
     </Fragment>
   );
