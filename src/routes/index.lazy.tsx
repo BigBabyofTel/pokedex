@@ -1,5 +1,5 @@
 import { createLazyFileRoute } from "@tanstack/react-router";
-import cover from "../../public/pokedex.svg";
+import cover from "/pokedex.svg";
 
 export const Route = createLazyFileRoute("/")({
   component: FrontDisplay,
@@ -13,7 +13,7 @@ export function FrontDisplay() {
           <img
             src={cover}
             alt="front display"
-            className="portrait:h-[33%] lg:w-[1400px]"
+            className="portrait:h-[33%] lg:w-[1200px]"
           />
         </a>
       </div>

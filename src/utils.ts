@@ -32,15 +32,15 @@ export const nanoId = () => {
     return index;
   }
 //capitalize strings
-  export function getCapital(val: string) {
+export function getCapital(val: string | undefined): string | undefined {
+  if (typeof val === 'string')
     return val.charAt(0).toUpperCase() + val.slice(1);
   }
-
   //get pokemon data
-  export const getPokemon = async(): Promise<Pokemon> => {
-    const url = "https://pokeapi.co/api/v2/pokemon/2";
-    const response = await axios.get(url);
-    return response.data as Pokemon
+  export const getPokemon = async(val: string | number): Promise<Pokemon> => {
+    const url = `https://pokeapi.co/api/v2/pokemon/${val}`;
+    const response: Pokemon = await axios.get(url);
+    return response;
   }
 
   //evolution data

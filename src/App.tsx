@@ -107,9 +107,7 @@ export default function App() {
     const amount = item.base_stat;
     const name = item.stat.name;
     return (
-      <span key={nanoId()}>
-        {getCapital(name)}: {amount} <Progress value={amount} />
-      </span>
+     
     );
   });
 
