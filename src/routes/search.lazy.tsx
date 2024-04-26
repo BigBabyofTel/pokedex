@@ -10,14 +10,16 @@ import {
   Switch,
   Progress,
 } from "@nextui-org/react";
-import { useState } from "react";
+import { ReactNode, useState } from "react";
 import { Pokemon } from "@/interfaces";
 import axios from "axios";
-import { Evolution } from "@/components/ui/evolution";
+import { Stats } from "@/components/ui/stats";
 
 export const Route = createLazyFileRoute("/search")({
   component: Search,
 });
+
+
 
 export function Search() {
   const [isOn, setIsOn] = useState(false);
@@ -39,7 +41,7 @@ export function Search() {
     return <span key={nanoid()}>{getCapital(item.move.name)}</span>;
   });
 
-  const stats = data?.data.stats;
+const stats = data?.data.stats;
 
   const statLevel = stats?.map(
     (item: { stat: { name: string }; base_stat: number }) => {
@@ -56,13 +58,15 @@ export function Search() {
   const name = data?.data.name as string;
   const weight = data?.data.weight as number;
   const height = data?.data.height as number;
-  const image = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${data?.data.id}.png`
+  const image = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${data?.data.id}.png`;
   const type = data?.data.types;
   const types = type?.map((item) => {
-    return (<span key={nanoid()}><p>{getCapital(item.type.name)}</p></span>)
-  })
-
-
+    return (
+      <span key={nanoid()}>
+        <p>{getCapital(item.type.name)}</p>
+      </span>
+    );
+  });
 
   console.log(type);
 
@@ -81,7 +85,7 @@ export function Search() {
           />
           {error?.name}
           {error?.message}
-          {searchKey !== '' && (
+          {searchKey !== "" && (
             <>
               <Card
                 aria-label="pokemon-image"
@@ -90,8 +94,12 @@ export function Search() {
               >
                 <CardHeader></CardHeader>
                 <CardBody>
-                  {searchKey && <><h1 className="text-3xl">{getCapital(name)}</h1>
-                  <img src={image} /></>}
+                  {searchKey && (
+                    <>
+                      <h1 className="text-3xl">{getCapital(name)}</h1>
+                      <img src={image} />
+                    </>
+                  )}
                 </CardBody>
               </Card>
               <Card
@@ -120,7 +128,8 @@ export function Search() {
                     )}
                   </section>
                   <br />
-                  <section>Type
+                  <section>
+                    Type
                     {types}
                   </section>
                 </CardBody>
@@ -135,8 +144,8 @@ export function Search() {
                 </CardHeader>
                 <CardBody>{statLevel}</CardBody>
               </Card>
-              <Evolution/>
-              
+              <Stats stats={stats}/>
+                      
               <Card
                 aria-label="pokemon-moves"
                 isBlurred
