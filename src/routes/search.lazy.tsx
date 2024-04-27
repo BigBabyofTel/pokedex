@@ -144,7 +144,18 @@ const stats = data?.data.stats;
                 </CardHeader>
                 <CardBody>{statLevel}</CardBody>
               </Card>
-              <Stats stats={stats}/>
+              <Card
+        aria-label="pokemon-evolutions"
+        isBlurred
+        className="row-start-6 row-span-2 col-span-4 lg:col-start-2 lg:col-span-2 lg:row-start-7 lg:row-span-4"
+      >
+        <CardHeader>
+          <h1>evolution</h1>
+        </CardHeader>
+        <CardBody>
+          
+        </CardBody>
+      </Card>
                       
               <Card
                 aria-label="pokemon-moves"
