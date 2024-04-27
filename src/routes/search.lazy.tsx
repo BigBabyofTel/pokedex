@@ -10,10 +10,10 @@ import {
   Switch,
   Progress,
 } from "@nextui-org/react";
-import { ReactNode, useState } from "react";
 import { Pokemon } from "@/interfaces";
 import axios from "axios";
-import { Stats } from "@/components/ui/stats";
+import { useState } from "react";
+
 
 export const Route = createLazyFileRoute("/search")({
   component: Search,
